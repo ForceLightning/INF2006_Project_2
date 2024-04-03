@@ -59,7 +59,7 @@ def load_data(
             StructField("_city", StringType(), True),
             StructField("_ip", StringType(), False),
             StructField("airline_sentiment", StringType(), False),
-            StructField("negativereason", StringType(), True),
+            StructField("negative_reason", StringType(), True),
             StructField("airline", StringType(), False),
             StructField("airline_sentiment_gold", StringType(), True),
             StructField("name", StringType(), False),
