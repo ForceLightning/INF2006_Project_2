@@ -157,3 +157,6 @@ cython_debug/
 
 # MAC OS
 .DS_Store
+
+# Any files inside of a directory called processed
+Twitter_Airline Dataset/processed/*
