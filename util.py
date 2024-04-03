@@ -87,7 +87,7 @@ def load_data(
             .option("timestampFormat", "M/d/yyyy HH:mm:ss")
             .option("quote", '"')
             .option("escape", '"')
-            .csv(os.path.join(DATA_DIR, file), schema=schema)
+            .csv(os.path.join(data_dir, file), schema=schema)
         )
         all_dfs.append(df)
         iterator.write(f"Loaded {file} with {df.count()} rows")
