@@ -15,8 +15,10 @@ import org.apache.hadoop.mapreduce.Mapper;
  * ComplaintsMapper class for task 3.
  */
 public class ComplaintsMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
-    Hashtable<String, String> countryCodesMap = new Hashtable<>(); // Hashtable to store country
-                                                                   // codes to country names.
+    /**
+     * Hashtable to store country codes to country names.
+     */
+    Hashtable<String, String> countryCodesMap = new Hashtable<>();
 
     /**
      * Setup function for ComplaintsMapper, uses the distributed cache to get the country codes.

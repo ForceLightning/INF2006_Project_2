@@ -16,10 +16,11 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class ComplaintsReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 
     /**
-     * Sorts a map by values in descending order
-     * 
-     * @param map Map to be sorted in descending order
-     * @return SortedSet of the map entries sorted by values in descending order
+     * Sort the map by values in descending order.
+     * @param <K> Key of the map.
+     * @param <V> Value of the map, must be comparable.
+     * @param map Map to sort.
+     * @return
      */
     private static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValuesDescending(
             Map<K, V> map) {
@@ -35,8 +36,15 @@ public class ComplaintsReducer extends Reducer<Text, IntWritable, Text, IntWrita
         return sortedEntries;
     }
 
-    private int n; // top N of output
-    private TreeMap<String, Integer> countryComplaintsMap; // Map of country to number of complaints
+    /**
+     * top N of output to write.
+     */
+    private int n;
+
+    /**
+     * Map to store the number of complaints from each country.
+     */
+    private TreeMap<String, Integer> countryComplaintsMap;
 
     /**
      * Setup method to initialize the reducer.
