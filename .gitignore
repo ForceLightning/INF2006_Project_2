@@ -160,3 +160,9 @@ cython_debug/
 
 # Any files inside of a directory called processed
 Twitter_Airline Dataset/processed/*
+
+# Data files
+data/*.csv
+
+# MapReduce Output
+output/
