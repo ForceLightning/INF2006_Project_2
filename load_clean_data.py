@@ -1,14 +1,11 @@
 import os
-
 import pyspark
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import regexp_replace, split, when
-
+from pyspark.sql.functions import regexp_replace, split, when, count, desc, coalesce, lit, collect_list, col
 from util import load_data
 
 DATA_DIR = "data"
-SAVED_DIR = "Twitter_Airline Dataset/processed"
-
+SAVED_DIR = DATA_DIR + "/processed"
 
 def load_clean_data(
     data_dir: str | os.PathLike | None = DATA_DIR,
@@ -35,7 +32,7 @@ def load_clean_data(
     spark_session = (
         spark_session
         if spark_session
-        else SparkSession.builder.appName("Airline Twitter Sentiment Analysis")
+        else SparkSession.builder.appName("Airline Twitter Sentiment Analysis").getOrCreate()
     )
 
     # Check if the saved directory exists
@@ -106,6 +103,38 @@ def load_clean_data(
     # Drop the intermediate split column
     df_deduplicated = df_deduplicated.drop("negativereason_split")
 
+    # Filling missing values in 'negativereason1' and 'negativereason2' with 'Unknown'
+    df_deduplicated = df_deduplicated.withColumn(
+        "negativereason1",
+        when(df_deduplicated["negativereason1"].isNull(), "Unknown").otherwise(
+            df_deduplicated["negativereason1"]
+        ),
+    )
+    df_deduplicated = df_deduplicated.withColumn(
+        "negativereason2",
+        when(df_deduplicated["negativereason2"].isNull(), "Unknown").otherwise(
+            df_deduplicated["negativereason2"]
+        ),
+    )
+
+    # Group by country and user_timezone, count occurrences, and order by count in descending order
+    grouped_df = df_deduplicated.groupBy('_country', 'user_timezone').agg(count('*').alias('count')).orderBy('_country', desc('count'))
+
+    # Get the most common user_timezone for each country
+    most_common_user_timezone = grouped_df.groupBy('_country').agg(collect_list('user_timezone').getItem(0).alias('most_common_user_timezone'))
+
+    # Left join to fill missing values in 'user_timezone' with the most common value for the corresponding country
+    df_deduplicated = df_deduplicated.join(most_common_user_timezone, on='_country', how='left') \
+                                     .withColumn('user_timezone', coalesce(col('user_timezone'), col('most_common_user_timezone'), lit('Unknown')))
+
+    # Drop the intermediate 'grouped_df' DataFrame
+    grouped_df.unpersist()
+
+    # Fill missing values in 'user_timezone' with 'Unknown'
+    df_deduplicated = df_deduplicated.withColumn(
+        'user_timezone', when(col('user_timezone').isNull(), 'Unknown').otherwise(col('user_timezone'))
+    )
+
     # Drop inconsistent data columns and columns that have been split
     df_deduplicated = df_deduplicated.drop(
         "airline_sentiment_gold",
@@ -115,10 +144,16 @@ def load_clean_data(
         "_city",
         "tweet_location",
         "tweet_coord",
+        "_country",
+        "most_common_user_timezone"
     )
 
+    # Write the DataFrame to a CSV file
     df_deduplicated.repartition(1).write.csv(
-        "./Twitter_Airline Dataset/processed", header=True, mode="overwrite", quote='"'
+        SAVED_DIR, header=True, mode='overwrite', quote='\"'
     )
 
     return df_deduplicated
+
+if __name__ == "__main__":
+    load_clean_data()
