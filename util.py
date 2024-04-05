@@ -11,7 +11,6 @@ from pyspark.sql.types import (
     StringType,
     StructField,
     StructType,
-    TimestampType,
 )
 from tqdm.auto import tqdm
 
@@ -47,11 +46,11 @@ def load_data(
     schema = StructType(
         [
             StructField("_unit_id", IntegerType(), False),
-            StructField("_created_at", TimestampType(), False),
+            StructField("_created_at", StringType(), False),
             StructField("_golden", BooleanType(), False),
             StructField("_id", IntegerType(), False),
             StructField("_missed", BooleanType(), True),
-            StructField("_started_at", TimestampType(), False),
+            StructField("_started_at", StringType(), False),
             StructField("_tainted", BooleanType(), False),
             StructField("_channel", StringType(), False),
             StructField("_trust", FloatType(), False),
@@ -71,7 +70,7 @@ def load_data(
             StructField(
                 "tweet_coord", StringType(), True
             ),  # This should really be an ArrayType(FloatType)
-            StructField("tweet_created", TimestampType(), False),
+            StructField("tweet_created", StringType(), False),
             StructField("tweet_id", FloatType(), False),
             StructField("tweet_location", StringType(), True),
             StructField("user_timezone", StringType(), True),
