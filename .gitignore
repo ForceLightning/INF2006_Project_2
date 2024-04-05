@@ -1,117 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,eclipse,java,python,spark,apachehadoop
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,eclipse,java,python,spark,apachehadoop
-
-### ApacheHadoop ###
-*.iml
-*.ipr
-*.iws
-*.orig
-*.rej
-.idea
-.svn
-.classpath
-.project
-.settings
-target
-hadoop-common-project/hadoop-kms/downloads/
-hadoop-hdfs-project/hadoop-hdfs/downloads
-hadoop-hdfs-project/hadoop-hdfs-httpfs/downloads
-hadoop-common-project/hadoop-common/src/test/resources/contract-test-options.xml
-hadoop-tools/hadoop-openstack/src/test/resources/contract-test-options.xml
-
-### Eclipse ###
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
-
-# External tool builders
-.externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
-*.launch
-
-# PyDev specific (Python IDE for Eclipse)
-*.pydevproject
-
-# CDT-specific (C/C++ Development Tooling)
-.cproject
-
-# CDT- autotools
-.autotools
-
-# Java annotation processor (APT)
-.factorypath
-
-# PDT-specific (PHP Development Tools)
-.buildpath
-
-# sbteclipse plugin
-.target
-
-# Tern plugin
-.tern-project
-
-# TeXlipse plugin
-.texlipse
-
-# STS (Spring Tool Suite)
-.springBeans
-
-# Code Recommenders
-.recommenders/
-
-# Annotation Processing
-.apt_generated/
-.apt_generated_test/
-
-# Scala IDE specific (Scala & Java development for Eclipse)
-.cache-main
-.scala_dependencies
-.worksheet
-
-# Uncomment this line if you wish to ignore the project description file.
-# Typically, this file would be tracked if it contains build/dependency configurations:
-#.project
-
-### Eclipse Patch ###
-# Spring Boot Tooling
-.sts4-cache/
-
-### Java ###
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
-
-### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -170,6 +56,7 @@ cover/
 *.pot
 
 # Django stuff:
+*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -265,137 +152,17 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+# CSV files
+*.csv
 
-### Python Patch ###
-# Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration
-poetry.toml
-
-# ruff
-.ruff_cache/
-
-# LSP config files
-pyrightconfig.json
-
-### Spark ###
-*#*#
-*.#*
-*.pyc
-*.pyo
-*~
+# MAC OS
 .DS_Store
-.ensime
-.ensime_cache/
-.ensime_lucene
-.generated-mima*
-.idea/
-.idea_modules/
-.pydevproject
-/lib/
-R-unit-tests.log
-R/unit-tests.out
-R/cran-check.out
-R/pkg/vignettes/sparkr-vignettes.html
-R/pkg/tests/fulltests/Rplots.pdf
-build/*.jar
-build/apache-maven*
-build/scala*
-build/zinc*
-cache
-checkpoint
-conf/*.cmd
-conf/*.conf
-conf/*.properties
-conf/*.sh
-conf/*.xml
-conf/java-opts
-conf/slaves
-dependency-reduced-pom.xml
-derby.log
-dev/create-release/*final
-dev/create-release/*txt
-dev/pr-deps/
-docs/_site
-docs/api
-sql/docs
-sql/site
-lib_managed/
-lint-r-report.log
-log/
-logs/
-out/
-project/boot/
-project/build/target/
-project/plugins/lib_managed/
-project/plugins/project/build.properties
-project/plugins/src_managed/
-project/plugins/target/
-python/lib/pyspark.zip
-python/deps
-python/test_coverage/coverage_data
-python/test_coverage/htmlcov
-python/pyspark/python
-reports/
-scalastyle-on-compile.generated.xml
-scalastyle-output.xml
-scalastyle.txt
-spark-*-bin-*.tgz
-spark-tests.log
-src_managed/
-streaming-tests.log
-unit-tests.log
-work/
-docs/.jekyll-metadata
 
-# For Hive
-TempStatsStore/
-metastore/
-metastore_db/
-sql/hive-thriftserver/test_warehouses
-warehouse/
-spark-warehouse/
+# Any files inside of a directory called processed
+Twitter_Airline Dataset/processed/*
 
-# For R session data
-.RData
-.RHistory
-.Rhistory
-*.Rproj
-*.Rproj.*
+# Data files
+data/*.csv
 
-.Rproj.user
-
-# For SBT
-.jvmopts
-
-
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
-.history/
-
-# Built Visual Studio Code Extensions
-*.vsix
-
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
-
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,eclipse,java,python,spark,apachehadoop
-
-# Data
-data/
-
-# Output
+# MapReduce Output
 output/
