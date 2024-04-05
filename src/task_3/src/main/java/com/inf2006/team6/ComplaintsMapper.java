@@ -22,7 +22,7 @@ public class ComplaintsMapper extends Mapper<LongWritable, Text, Text, IntWritab
 
     /**
      * Setup function for ComplaintsMapper, uses the distributed cache to get the country codes.
-     * 
+     *
      * @param context context of the job.
      * @throws IOException if an I/O error occurs.
      */
@@ -51,7 +51,7 @@ public class ComplaintsMapper extends Mapper<LongWritable, Text, Text, IntWritab
 
     /**
      * Map function for ComplaintsMapper.
-     * 
+     *
      * @param key line number.
      * @param value line of text.
      * @param context context of the job.
@@ -65,10 +65,16 @@ public class ComplaintsMapper extends Mapper<LongWritable, Text, Text, IntWritab
         // Splits the line by commas and retrieves the country and sentiment.
         //
         String[] parts = value.toString().split(",");
-        String countryCode = parts[10];
-        SentimentEnum sentiment = SentimentEnum.valueOf(parts[14].toUpperCase());
+
+        // ! This is the column number for the country code.
+        String countryCode = parts[0];
+
+        // ! This is the column number for the sentiment.
+        SentimentEnum sentiment = SentimentEnum.valueOf(parts[11].toUpperCase());
+
         SentimentEnum targetSentiment =
                 SentimentEnum.valueOf(context.getConfiguration().get("sentiment").toUpperCase());
+
 
         // If the country and sentiment are not null, and the sentiment is the target sentiment,
         // write the country and 1 to the context.

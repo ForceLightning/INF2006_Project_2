@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 public class ComplaintsValidationMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
     /**
      * Maps the input data to the output if it is valid. {@link #isValid(String)}
-     * 
+     *
      * @param key The line number.
      * @param value The line of text.
      * @throws IOException if an I/O error occurs.
@@ -30,12 +30,12 @@ public class ComplaintsValidationMapper extends Mapper<LongWritable, Text, LongW
     /**
      * Checks if the input data is valid. The input data is valid if it has 27 columns and is not
      * the header.
-     * 
+     *
      * @param line The line of text.
      * @return True if the input data is valid, false otherwise.
      */
     private boolean isValid(String line) {
         String[] parts = line.split(",");
-        return parts.length == 27 && !parts[0].equals("_unit_id");
+        return parts.length == 21 && !parts[0].equals("_country");
     }
 }

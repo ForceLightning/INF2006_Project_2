@@ -6,12 +6,14 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Main",
+            "name": "Task 3",
             "request": "launch",
             "mainClass": "com.inf2006.team6.Main",
             "projectName": "task_3",
             "args": [
-                "data/combined_csv.csv",
+                "data/processed/part-00000-d805e8ca-ef63-4448-9dce-5238a38fb1a6-c000.csv",
+                // "data/combined_csv.csv",
+                // "data/processed.csv",
                 "output",
                 "data/ISO-3166-alpha3.tsv",
                 5,
