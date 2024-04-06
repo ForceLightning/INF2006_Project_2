@@ -8,6 +8,17 @@ spark = SparkSession.builder.appName("Airline Twitter Sentiment Analysis").getOr
 
 df = load_data()
 
+# Need this for task 3, sorry for the confusion
+COLUMNS_TO_DROP = [
+    "airline_sentiment_gold",
+    "negativereason_gold",
+    "negativereason",
+    "_region",
+    "_city",
+    "_tainted",
+    "most_common_user_timezone",
+]
+
 # Removing duplicates
 df_deduplicated = df.dropDuplicates(
     ["tweet_id", "_id", "text", "tweet_created", "name", "_created_at"]
@@ -151,13 +162,7 @@ df_deduplicated = df_deduplicated.withColumn(
 # Drop inconsistent data columns and columns that have been split
 # _tainted is dropped because all the values are False after deduplication
 df_deduplicated = df_deduplicated.drop(
-    "airline_sentiment_gold",
-    "negativereason_gold",
-    "negativereason",
-    "_region",
-    "_city",
-    "_tainted",
-    "most_common_user_timezone",
+    *COLUMNS_TO_DROP
 )
 
 
