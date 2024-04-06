@@ -11,7 +11,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  */
 public class ComplaintsValidationMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
     /**
-     * Maps the input data to the output if it is valid. {@link #isValid(String)}
+     * Maps the input data to the output if it is valid. {@link #isValid(String, Context)}
      *
      * @param key The line number.
      * @param value The line of text.
@@ -22,7 +22,7 @@ public class ComplaintsValidationMapper extends Mapper<LongWritable, Text, LongW
     protected void map(LongWritable key, Text value,
             Mapper<LongWritable, Text, LongWritable, Text>.Context context)
             throws IOException, InterruptedException {
-        if (isValid(value.toString())) {
+        if (isValid(value.toString(), context)) {
             context.write(key, value);
         }
     }
@@ -32,10 +32,13 @@ public class ComplaintsValidationMapper extends Mapper<LongWritable, Text, LongW
      * the header.
      *
      * @param line The line of text.
+     * @param context The context of the job, used to get the header column invalidator.
      * @return True if the input data is valid, false otherwise.
      */
-    private boolean isValid(String line) {
+    private boolean isValid(String line, Context context) {
         String[] parts = line.split(",");
-        return parts.length == 21 && !parts[0].equals("_country");
+        String headerInvalidator = context.getConfiguration().get("header_column_idx_0");
+        int expectedLength = context.getConfiguration().getInt("num_columns", 21);
+        return parts.length == expectedLength && !parts[0].equals(headerInvalidator);
     }
 }

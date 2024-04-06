@@ -2,9 +2,9 @@ package com.inf2006.team6;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -20,7 +20,7 @@ public class ComplaintsReducer extends Reducer<Text, IntWritable, Text, IntWrita
      * @param <K> Key of the map.
      * @param <V> Value of the map, must be comparable.
      * @param map Map to sort.
-     * @return
+     * @return Sorted set of the map.
      */
     private static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValuesDescending(
             Map<K, V> map) {
@@ -44,11 +44,11 @@ public class ComplaintsReducer extends Reducer<Text, IntWritable, Text, IntWrita
     /**
      * Map to store the number of complaints from each country.
      */
-    private TreeMap<String, Integer> countryComplaintsMap;
+    private HashMap<String, Integer> countryComplaintsMap;
 
     /**
      * Setup method to initialize the reducer.
-     * 
+     *
      * @param context Context of the job.
      * @throws IOException If an I/O error occurs.
      * @throws InterruptedException If the thread is interrupted.
@@ -56,12 +56,12 @@ public class ComplaintsReducer extends Reducer<Text, IntWritable, Text, IntWrita
     @Override
     public void setup(Context context) throws IOException, InterruptedException {
         n = Integer.parseInt(context.getConfiguration().get("N"));
-        countryComplaintsMap = new TreeMap<String, Integer>();
+        countryComplaintsMap = new HashMap<String, Integer>();
     }
 
     /**
      * Reduce method to count the number of complaints from each country.
-     * 
+     *
      * @param key Country of origin of the complaint.
      * @param values Number of complaints from the country.
      * @param context Context of the job.
@@ -81,7 +81,7 @@ public class ComplaintsReducer extends Reducer<Text, IntWritable, Text, IntWrita
 
     /**
      * Cleanup method to write the top N countries with the most complaints.
-     * 
+     *
      * @param context Context of the job.
      * @throws IOException If an I/O error occurs.
      * @throws InterruptedException If the thread is interrupted.

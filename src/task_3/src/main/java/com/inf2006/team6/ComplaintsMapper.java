@@ -66,11 +66,13 @@ public class ComplaintsMapper extends Mapper<LongWritable, Text, Text, IntWritab
         //
         String[] parts = value.toString().split(",");
 
-        // ! This is the column number for the country code.
-        String countryCode = parts[0];
 
-        // ! This is the column number for the sentiment.
-        SentimentEnum sentiment = SentimentEnum.valueOf(parts[11].toUpperCase());
+        // Retrieves the country code and sentiment from the configuration.
+        //
+        int countryCodeColumn = context.getConfiguration().getInt("country_idx", 0);
+        String countryCode = parts[countryCodeColumn];
+        int sentimentColumn = context.getConfiguration().getInt("sentiment_idx", 11);
+        SentimentEnum sentiment = SentimentEnum.valueOf(parts[sentimentColumn].toUpperCase());
 
         SentimentEnum targetSentiment =
                 SentimentEnum.valueOf(context.getConfiguration().get("sentiment").toUpperCase());
