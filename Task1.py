@@ -156,10 +156,13 @@ df_deduplicated = df_deduplicated.drop(
     "negativereason",
     "_region",
     "_city",
-    "tweet_location",
-    "tweet_coord",
     "_tainted",
     "most_common_user_timezone",
+)
+
+
+df_deduplicated = df_deduplicated.dropna(
+    subset=["tweet_location", "tweet_coord"], how="all"
 )
 
 # Show the resulting DataFrame

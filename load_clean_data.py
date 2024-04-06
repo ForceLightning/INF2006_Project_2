@@ -7,10 +7,11 @@ from util import load_data
 DATA_DIR = "data"
 SAVED_DIR = DATA_DIR + "/processed"
 
+
 def load_clean_data(
     data_dir: str | os.PathLike | None = DATA_DIR,
-    spark_session: SparkSession = None,
-    save_to_dir: str | os.PathLike | None = SAVED_DIR,
+    spark_session: SparkSession | None = None,
+    save_to_dir: str | os.PathLike = SAVED_DIR,
 ) -> pyspark.sql.DataFrame:
     """Loads data from the data directory into a Spark DataFrame and performs
     data cleaning operations.
@@ -32,7 +33,9 @@ def load_clean_data(
     spark_session = (
         spark_session
         if spark_session
-        else SparkSession.builder.appName("Airline Twitter Sentiment Analysis").getOrCreate()
+        else SparkSession.builder.appName(
+            "Airline Twitter Sentiment Analysis"
+        ).getOrCreate()
     )
 
     # Check if the saved directory exists
@@ -59,14 +62,16 @@ def load_clean_data(
     df_deduplicated = df_deduplicated.withColumn(
         "_created_at",
         F.when(
-            F.length(F.col("_created_at")) == 18, F.substring(F.col("_created_at"), 1, 15)
+            F.length(F.col("_created_at")) == 18,
+            F.substring(F.col("_created_at"), 1, 15),
         ).otherwise(F.col("_created_at")),
     )
 
     df_deduplicated = df_deduplicated.withColumn(
         "_started_at",
         F.when(
-            F.length(F.col("_started_at")) == 18, F.substring(F.col("_started_at"), 1, 15)
+            F.length(F.col("_started_at")) == 18,
+            F.substring(F.col("_started_at"), 1, 15),
         ).otherwise(F.col("_started_at")),
     )
 
@@ -85,7 +90,9 @@ def load_clean_data(
     )
 
     # Replace all double quotes with single quotes
-    df_deduplicated = df_deduplicated.withColumn("text", F.regexp_replace("text", '"', "'"))
+    df_deduplicated = df_deduplicated.withColumn(
+        "text", F.regexp_replace("text", '"', "'")
+    )
 
     # Filling missing values in the '_missed' column with False
     df_deduplicated = df_deduplicated.withColumn(
@@ -126,7 +133,8 @@ def load_clean_data(
     df_deduplicated = df_deduplicated.withColumn(
         "negativereason1",
         F.when(
-            df_deduplicated["negativereason1"].isNull(), df_deduplicated["negativereason"]
+            df_deduplicated["negativereason1"].isNull(),
+            df_deduplicated["negativereason"],
         ).otherwise(df_deduplicated["negativereason1"]),
     )
 
@@ -164,22 +172,26 @@ def load_clean_data(
         most_common_user_timezone, on="_country", how="left"
     ).withColumn(
         "user_timezone",
-        F.coalesce(F.col("user_timezone"), F.col("most_common_user_timezone"), F.lit("Unknown")),
+        F.coalesce(
+            F.col("user_timezone"), F.col("most_common_user_timezone"), F.lit("Unknown")
+        ),
     )
 
     # Drop the intermediate 'grouped_df' DataFrame
     grouped_df.unpersist()
 
-
     # Fill missing values in 'user_timezone' with 'Unknown'
     df_deduplicated = df_deduplicated.withColumn(
         "user_timezone",
-        F.when(F.col("user_timezone").isNull(), "Unknown").otherwise(F.col("user_timezone")),
+        F.when(F.col("user_timezone").isNull(), "Unknown").otherwise(
+            F.col("user_timezone")
+        ),
     )
 
     # Fill missing values in '_country' with 'Unknown'
     df_deduplicated = df_deduplicated.withColumn(
-        "_country", F.when(F.col("_country").isNull(), "Unknown").otherwise(F.col("_country"))
+        "_country",
+        F.when(F.col("_country").isNull(), "Unknown").otherwise(F.col("_country")),
     )
 
     # Drop inconsistent data columns and columns that have been split
@@ -190,19 +202,21 @@ def load_clean_data(
         "negativereason",
         "_region",
         "_city",
-        "tweet_location",
-        "tweet_coord",
         "_tainted",
         "most_common_user_timezone",
     )
 
+    df_deduplicated = df_deduplicated.dropna(
+        subset=["tweet_location", "tweet_coord"], how="all"
+    )
 
     # Write the DataFrame to a CSV file
     df_deduplicated.repartition(1).write.csv(
-        SAVED_DIR, header=True, mode='overwrite', quote='\"'
+        SAVED_DIR, header=True, mode="overwrite", quote='"'
     )
 
     return df_deduplicated
+
 
 if __name__ == "__main__":
     load_clean_data()
