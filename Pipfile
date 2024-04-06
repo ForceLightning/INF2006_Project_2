@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyspark = "*"
+pandas = "*"
+matplotlib = "*"
+seaborn = "*"
+numpy = "*"
+scikit-learn = "*"
+tqdm = "*"
+
+[dev-packages]
+ipykernel = "*"
+autopep8 = "*"
+pylint = "*"
+ipywidgets = "*"
+sphinx = "*"
+pre-commit = "*"
+
+[requires]
+python_version = "3.10"
+python_full_version = "3.10.7"

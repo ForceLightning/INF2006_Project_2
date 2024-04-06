@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Task 3",
+            "request": "launch",
+            "mainClass": "com.inf2006.team6.Main",
+            "projectName": "task_3",
+            "args": [
+                "data/processed/part-00000-d805e8ca-ef63-4448-9dce-5238a38fb1a6-c000.csv",
+                // "data/combined_csv.csv",
+                // "data/processed.csv",
+                "output",
+                "data/ISO-3166-alpha3.tsv",
+                5,
+                "negative"
+            ]
+        }
+    ]
+}
