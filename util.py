@@ -23,6 +23,16 @@ from shapely.geometry import Point
 from tqdm.auto import tqdm
 
 DATA_DIR = "data"
+SENTIMENT_DATA_DIR = "Twitter_Airline Dataset/sentiment"
+
+with open(os.path.join(DATA_DIR, "cities.json"), "r", encoding="utf-8") as f:
+    cities_json = json.load(f)
+
+with open(os.path.join(DATA_DIR, "countries.json"), "r", encoding="utf-8") as f:
+    countries_json = json.load(f)
+
+with open(os.path.join(DATA_DIR, "states.json"), "r", encoding="utf-8") as f:
+    states_json = json.load(f)
 
 with open(os.path.join(DATA_DIR, "cities.json"), "r", encoding="utf-8") as f:
     cities_json = json.load(f)
@@ -117,7 +127,6 @@ def load_data(
     return super_df
 
 
-
 def match_location_with_country_by_city(
     location: str, cities: dict = cities_json, countries: dict = countries_json
 ):
@@ -131,7 +140,8 @@ def match_location_with_country_by_city(
                 country = c["country_name"]
                 break
     if country:
-        country = [c["iso3"] for c in countries if country["name"] == country][0]
+        country = [c["iso3"]
+                   for c in countries if country["name"] == country][0]
     return country
 
 
@@ -147,7 +157,8 @@ def match_location_with_country_by_state(
                 country = s["country_name"]
                 break
     if country:
-        country = [c["iso3"] for c in countries if country["name"] == country][0]
+        country = [c["iso3"]
+                   for c in countries if country["name"] == country][0]
     return country
 
 
@@ -169,3 +180,77 @@ def match_location_with_country_by_country(
                 break
 
     return country
+
+
+def load_sentiment_data(
+    data_dir: str | os.PathLike = DATA_DIR, spark_session: SparkSession = None
+) -> pyspark.sql.DataFrame:
+    """Loads data from the data directory into a Spark DataFrame.
+
+    :param data_dir: Data directory, defaults to DATA_DIR
+    :type data_dir: str | os.PathLike, optional
+    :param spark_session: Spark session if it has already been instantiated, defaults to None
+    :type spark_session: SparkSession, optional
+    :return: Combined DataFrame of all CSV files in the data directory
+    :rtype: pyspark.sql.DataFrame
+    """
+
+    spark = (
+        spark_session
+        if spark_session is not None
+        else SparkSession.builder.appName(
+            "Airline Twitter Sentiment Analysis"
+        ).getOrCreate()
+    )
+
+    schema = StructType(
+        [
+            StructField("_unit_id", IntegerType(), False),
+            StructField("_created_at", TimestampType(), False),
+            StructField("_golden", BooleanType(), False),
+            StructField("_id", IntegerType(), False),
+            StructField("_missed", BooleanType(), True),
+            StructField("_started_at", TimestampType(), False),
+            StructField("_tainted", BooleanType(), False),
+            StructField("_channel", StringType(), False),
+            StructField("_trust", FloatType(), False),
+            StructField("_worker_id", IntegerType(), False),
+            StructField("_country", StringType(), True),
+            StructField("_ip", StringType(), False),
+            StructField("airline_sentiment", StringType(), False),
+            StructField("negativereason", StringType(), True),
+            StructField("airline", StringType(), False),
+            StructField("airline_sentiment_gold", StringType(), True),
+            StructField("name", StringType(), False),
+            StructField("negativereason_gold", StringType(), True),
+            StructField("retweet_count", IntegerType(), False),
+            StructField("text", StringType(), False),
+            StructField("tweet_created", TimestampType(), False),
+            StructField("tweet_id", FloatType(), False),
+            StructField("user_timezone", StringType(), True),
+            StructField("negativereason1", StringType(), True),
+            StructField("negativereason2", StringType(), True),
+            StructField("sentiment", StringType(), True),
+        ]
+    )
+
+    # Check the csv files in the data directory
+    file = [
+        file
+        for file in os.listdir(data_dir)
+        if file.endswith(".csv")
+    ][0]
+
+    df = (
+        spark.read.option("wholeFile", True)
+        .option("multiLine", True)
+        .option("header", True)
+        .option("inferSchema", False)
+        .option("dateFormat", "m/d/yyyy")
+        .option("timestampFormat", "M/d/yyyy HH:mm:ss")
+        .option("quote", '"')
+        .option("escape", '"')
+        .csv(os.path.join(data_dir, file), schema=schema)
+    )
+
+    return df
