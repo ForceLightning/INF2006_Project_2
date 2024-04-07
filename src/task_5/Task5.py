@@ -14,9 +14,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, count, pandas_udf, udf, when
 from pyspark.sql.types import FloatType, StringType
 
-from task_5.get_sentiment import SentimentAnalysis
+from task_5.sentiment_analysis import SentimentAnalysis
 from utils.load_clean_data import load_clean_data
-from utils.util import load_data
 
 nltk.download("sentiwordnet")
 nltk.download("wordnet")
@@ -41,7 +40,8 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
 
     sentiment_class = SentimentAnalysis()
     df = df.withColumn(
-        "sentiment", udf(sentiment_class.get_sentiment, StringType())(col("text"))
+        "sentiment", udf(sentiment_class.get_sentiment,
+                         StringType())(col("text"))
     )
 
     df = df.withColumn(
@@ -60,7 +60,8 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
 
     df = df.withColumn(
         "get_sentiment_higher_threshold",
-        udf(sentiment_class.get_sentiment_higher_threshold, StringType())(col("text")),
+        udf(sentiment_class.get_sentiment_higher_threshold,
+            StringType())(col("text")),
     )
 
     df = df.withColumn(
@@ -91,6 +92,7 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
 
         accuracy = (matches / total_rows) * 100
 
+        print(f"Total matches for {column} is {matches}/{total_rows}")
         print(f"Accuracy for {column} is {accuracy}%")
 
     df.repartition(1).write.csv(
@@ -104,5 +106,6 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description="Task 5")
-    args.add_argument("--data_dir", type=str, help="Path to the data directory")
+    args.add_argument("--data_dir", type=str,
+                      help="Path to the data directory")
     run(**vars(args.parse_args()))
