@@ -137,14 +137,6 @@ def main(data_dir: str, output_dir: Optional[str] = None):
         ),
     )
 
-    # Filling missing values in the '_missed' column with False
-    df_deduplicated = df_deduplicated.withColumn(
-        "_missed",
-        F.when(df_deduplicated["_missed"].isNull(), False).otherwise(
-            df_deduplicated["_missed"].cast("boolean")
-        ),
-    )
-
     # Filling missing values in the 'retweet_count' column with 0
     df_deduplicated = df_deduplicated.withColumn(
         "retweet_count",
