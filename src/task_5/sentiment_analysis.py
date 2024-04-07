@@ -8,17 +8,39 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
 class SentimentAnalysis:
+    """
+    A class for performing sentiment analysis on text.
+
+    Attributes:
+        lemmatizer (WordNetLemmatizer): A lemmatizer object for lemmatizing words.
+        sid_obj (SentimentIntensityAnalyzer): A sentiment intensity analyzer object for VADER sentiment analysis.
+        threshold (float): The threshold value for determining positive, negative, or neutral sentiment.
+        increased_threshold (float): The increased threshold value for determining positive or negative sentiment.
+        decreased_threshold (float): The decreased threshold value for determining positive or negative sentiment.
+        stop_words (set): A set of stop words for removing from the text.
+        negations (set): A set of negation words for handling negation in sentiment analysis.
+    """
+
     def __init__(self):
         self.lemmatizer = WordNetLemmatizer()
         self.sid_obj = SentimentIntensityAnalyzer()
         self.threshold = 0.1
         self.increased_threshold = 0.2
-        self.decresed_threshold = 0.05
+        self.decreased_threshold = 0.05
         self.stop_words = set(nltk.corpus.stopwords.words('english'))
         self.negations = {"not", "never", "no", "nobody",
                           "none", "nor", "nothing", "nowhere"}
 
     def get_wordnet_pos(self, treebank_tag):
+        """
+        Maps the treebank part-of-speech tags to WordNet part-of-speech tags.
+
+        Parameters:
+            treebank_tag (str): The treebank part-of-speech tag.
+
+        Returns:
+            str or None: The corresponding WordNet part-of-speech tag, or None if no mapping is found.
+        """
         if treebank_tag.startswith('J'):
             return wn.ADJ
         elif treebank_tag.startswith('V'):
@@ -31,6 +53,16 @@ class SentimentAnalysis:
             return None
 
     def get_sentiment_vader(self, sentence):
+        """
+        Get the sentiment of a sentence using VADER sentiment analysis.
+
+        Args:
+            sentence (str): The sentence to analyze.
+
+        Returns:
+            str: The sentiment of the sentence. Possible values are "positive", "negative", or "neutral".
+                Returns None if the sentence is empty.
+        """
         if not sentence:
             return None
         sentiment_dict = self.sid_obj.polarity_scores(sentence)
@@ -43,6 +75,15 @@ class SentimentAnalysis:
             return "neutral"
 
     def get_sentiment(self, sentence):
+        """
+        Analyzes the sentiment of a given sentence.
+
+        Parameters:
+        sentence (str): The sentence to be analyzed.
+
+        Returns:
+        str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        """
         if not sentence:
             return None
 
@@ -85,6 +126,15 @@ class SentimentAnalysis:
             return "neutral"
 
     def get_sentiment_stop_words_removed(self, sentence):
+        """
+        Calculates the sentiment of a given sentence after removing stop words.
+
+        Args:
+            sentence (str): The input sentence.
+
+        Returns:
+            str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        """
         if not sentence:
             return None
 
@@ -131,6 +181,16 @@ class SentimentAnalysis:
             return "neutral"
 
     def get_sentiment_inverse_if_negative(self, sentence):
+        """
+        Calculates the sentiment of a given sentence using the SentiWordNet lexicon.
+        If the sentiment is negative, the scores are inverted.
+
+        Parameters:
+        sentence (str): The sentence to analyze.
+
+        Returns:
+        str: The sentiment of the sentence. Can be "positive", "negative", or "neutral".
+        """
         if not sentence:
             return None
 
@@ -185,6 +245,15 @@ class SentimentAnalysis:
             return "neutral"
 
     def get_sentiment_higher_threshold(self, sentence):
+        """
+        Calculates the sentiment of a given sentence using a higher threshold.
+
+        Args:
+            sentence (str): The input sentence to analyze.
+
+        Returns:
+            str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        """
         if not sentence:
             return None
 
@@ -227,6 +296,15 @@ class SentimentAnalysis:
             return "neutral"
 
     def get_sentiment_lower_threshold(self, sentence):
+        """
+        Calculates the sentiment of a given sentence based on a lower threshold.
+
+        Args:
+            sentence (str): The input sentence to analyze.
+
+        Returns:
+            str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        """
         if not sentence:
             return None
 

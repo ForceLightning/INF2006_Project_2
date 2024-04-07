@@ -26,6 +26,15 @@ nltk.download("stopwords")
 
 
 def run(data_dir: Optional[str | os.PathLike | Path]):
+    """
+    Run the Task 5 of the Airline Twitter Sentiment Analysis.
+
+    Args:
+        data_dir (Optional[str | os.PathLike | Path]): The directory path where the data is stored.
+
+    Returns:
+        None
+    """
     print("Running Task 2")
     os.environ["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
 
