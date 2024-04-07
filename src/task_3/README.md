@@ -29,6 +29,10 @@ For Windows, run:
 ```shell
 $env:PYTHONPATH = './src'; python -m task_3.task_3_preprocessing --data_dir=$(pwd)/data --output_dir=$(pwd)/data/task_3 --processed_csv_dir=$(pwd)/data/processed/task_3
 ```
+If dependencies are installed with Pipenv, setup the `.env` file with the environment variables set. An example is given in [example.env](/example.env)
+```shell
+pipenv run python -m task_3.task_3_preprocessing --data_dir=$(pwd)/data --output_dir=$(pwd)/data/task_3 --processed_csv_dir=$(pwd)/data/processed/task_3
+```
 
 ## Main MapReduce Task
 Run

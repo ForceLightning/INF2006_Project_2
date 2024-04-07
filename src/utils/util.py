@@ -16,11 +16,12 @@ from pyspark.sql.types import (
     StringType,
     StructField,
     StructType,
+    TimestampType
 )
 from tqdm.auto import tqdm
 
 DATA_DIR = "data"
-
+SENTIMENT_DATA_DIR = "Twitter_Airline Dataset/sentiment"
 
 def load_data(
     data_dir: str | os.PathLike = DATA_DIR, spark_session: Optional[SparkSession] = None
@@ -319,10 +320,80 @@ def deduplicate_data(
     )
 
 
+def load_sentiment_data(
+    data_dir: str | os.PathLike = DATA_DIR, spark_session: Optional[SparkSession] = None
+) -> pyspark.sql.DataFrame:
+    """Loads data from the data directory into a Spark DataFrame.
+
+    :param data_dir: Data directory, defaults to DATA_DIR
+    :type data_dir: str | os.PathLike, optional
+    :param spark_session: Spark session if it has already been instantiated, defaults to None
+    :type spark_session: SparkSession, optional
+    :return: Combined DataFrame of all CSV files in the data directory
+    :rtype: pyspark.sql.DataFrame
+    """
+
+    spark = (
+        spark_session
+        if spark_session is not None
+        else SparkSession.builder.appName(
+            "Airline Twitter Sentiment Analysis"
+        ).getOrCreate()
+    )
+
+    schema = StructType(
+        [
+            StructField("_unit_id", IntegerType(), False),
+            StructField("_created_at", TimestampType(), False),
+            StructField("_golden", BooleanType(), False),
+            StructField("_id", IntegerType(), False),
+            StructField("_missed", BooleanType(), True),
+            StructField("_started_at", TimestampType(), False),
+            StructField("_tainted", BooleanType(), False),
+            StructField("_channel", StringType(), False),
+            StructField("_trust", FloatType(), False),
+            StructField("_worker_id", IntegerType(), False),
+            StructField("_country", StringType(), True),
+            StructField("_ip", StringType(), False),
+            StructField("airline_sentiment", StringType(), False),
+            StructField("negativereason", StringType(), True),
+            StructField("airline", StringType(), False),
+            StructField("airline_sentiment_gold", StringType(), True),
+            StructField("name", StringType(), False),
+            StructField("negativereason_gold", StringType(), True),
+            StructField("retweet_count", IntegerType(), False),
+            StructField("text", StringType(), False),
+            StructField("tweet_created", TimestampType(), False),
+            StructField("tweet_id", FloatType(), False),
+            StructField("user_timezone", StringType(), True),
+            StructField("negativereason1", StringType(), True),
+            StructField("negativereason2", StringType(), True),
+            StructField("sentiment", StringType(), True),
+        ]
+    )
+
+    # Check the csv files in the data directory
+    file = [file for file in os.listdir(data_dir) if file.endswith(".csv")][0]
+
+    df = (
+        spark.read.option("wholeFile", True)
+        .option("multiLine", True)
+        .option("header", True)
+        .option("inferSchema", False)
+        .option("dateFormat", "m/d/yyyy")
+        .option("timestampFormat", "M/d/yyyy HH:mm:ss")
+        .option("quote", '"')
+        .option("escape", '"')
+        .csv(os.path.join(data_dir, file), schema=schema)
+    )
+
+    return df
+
+
 if __name__ == "__main__":
     args = argparse.ArgumentParser(description="Process the data")
     args.add_argument("--data_dir", type=str, default=DATA_DIR)
     args.add_argument("--output_dir", type=str, default=None)
     args.add_argument("--remove_newline", default=False, action="store_true")
-    args.add_argument("--columns_to_drop", nargs='+', type=list[str], default=None)
+    args.add_argument("--columns_to_drop", nargs="+", type=list[str], default=None)
     deduplicate_data(**vars(args.parse_args()))

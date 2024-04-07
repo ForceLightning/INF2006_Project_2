@@ -1,17 +1,20 @@
 import os
+from pathlib import Path
+
 import pyspark
-from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
-from util import load_data
+from pyspark.sql import SparkSession
+
+from utils.util import load_data
 
 DATA_DIR = "data"
-SAVED_DIR = DATA_DIR + "/processed"
+SAVED_DIR = os.path.join(DATA_DIR, "processed")
 
 
 def load_clean_data(
     data_dir: str | os.PathLike | None = DATA_DIR,
     spark_session: SparkSession | None = None,
-    save_to_dir: str | os.PathLike = SAVED_DIR,
+    save_to_dir: str | os.PathLike | Path = SAVED_DIR,
 ) -> pyspark.sql.DataFrame:
     """Loads data from the data directory into a Spark DataFrame and performs
     data cleaning operations.
@@ -201,7 +204,7 @@ def load_clean_data(
     # Drop inconsistent data columns and columns that have been split
     # _tainted is dropped because all the values are False after deduplication
     df_deduplicated = df_deduplicated.drop(
-        "airline_sentiment_gold",
+        # "airline_sentiment_gold",
         "negativereason_gold",
         "negativereason",
         "_region",

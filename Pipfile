@@ -13,6 +13,8 @@ scikit-learn = "*"
 tqdm = "*"
 geopandas = "*"
 pyarrow = "*"
+nltk = "*"
+vadersentiment = "*"
 
 [dev-packages]
 ipykernel = "*"
