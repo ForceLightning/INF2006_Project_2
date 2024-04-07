@@ -25,20 +25,31 @@ public class TopReasonsMapper extends Mapper<LongWritable, Text, Text, IntWritab
 
         LOG.info("Mapping task started for key: " + key.toString());
 
-        // initialize the CSVParser
         CSVParser parser = CSVFormat.DEFAULT
                 .withTrim()
                 .parse(new StringReader(value.toString()));
 
-        // Go thru each CSV record
+        // loop CSV record
         for (CSVRecord record : parser) {
-            // Extract the airline and negative reason using column numbers
-            String airline = record.get(14).trim(); 
-            String negativeReason1 = record.get(21).trim();
-            String negativeReason2 = record.get(22).trim();
-            String negativeReason = negativeReason1.equals("Unknown") ? negativeReason2 : negativeReason1;
-            compositeKey.set(airline + "_" + negativeReason);
-            context.write(compositeKey, one);
+
+            String airline = record.get(12).trim(); 
+            String negativeReason1 = record.get(19).trim();
+            String negativeReason2 = record.get(20).trim();
+            
+            if (airline.isEmpty() || airline.equals("NULL") || 
+                    (negativeReason1.isEmpty() || negativeReason1.equals("NULL") || negativeReason1.equals("Unknown"))  && 
+                    (negativeReason2.isEmpty() || negativeReason2.equals("NULL") || negativeReason2.equals("Unknown") )) {
+                    continue;
+                }
+                
+                // If negativeReason1 is "Unknown", use negativeReason2 if it is valid
+                String negativeReason = "Unknown".equals(negativeReason1) && !negativeReason2.equals("NULL") ? negativeReason2 : negativeReason1;
+                
+                // Only write out to context if the final negative reason is valid
+                if (!negativeReason.isEmpty() && !negativeReason.equals("NULL")) {
+                    compositeKey.set(airline + "_" + negativeReason);
+                    context.write(compositeKey, one);
+                }
         }
 
         LOG.info("Mapping task completed for key: " + key.toString());
