@@ -72,7 +72,7 @@ public class Main {
             // caught and handled by the calling function after the configuration has been updated.
             //
             int sentimentIndex = getColumnIndex(headerLine, "airline_sentiment");
-            int countryIndex = getColumnIndex(headerLine, "_country");
+            int countryIndex = getColumnIndex(headerLine, "iso3");
             conf.setInt("sentiment_idx", sentimentIndex);
             conf.setInt("country_idx", countryIndex);
 

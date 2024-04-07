@@ -11,6 +11,12 @@ seaborn = "*"
 numpy = "*"
 scikit-learn = "*"
 tqdm = "*"
+geopandas = "*"
+levenshtein = "*"
+pyarrow = "*"
+dask = "*"
+dask-expr = "*"
+country-converter = "*"
 
 [dev-packages]
 ipykernel = "*"

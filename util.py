@@ -1,8 +1,15 @@
 """This module contains utility functions for the project.
 """
-import os
 
+import json
+import os
+import re
+
+import pyproj
 import pyspark
+import pyspark.pandas as ps
+import geopandas as gpd
+from Levenshtein import ratio
 from pyspark.sql import SparkSession
 from pyspark.sql.types import (
     BooleanType,
@@ -12,9 +19,19 @@ from pyspark.sql.types import (
     StructField,
     StructType,
 )
+from shapely.geometry import Point
 from tqdm.auto import tqdm
 
 DATA_DIR = "data"
+
+with open(os.path.join(DATA_DIR, "cities.json"), "r", encoding="utf-8") as f:
+    cities_json = json.load(f)
+
+with open(os.path.join(DATA_DIR, "countries.json"), "r", encoding="utf-8") as f:
+    countries_json = json.load(f)
+
+with open(os.path.join(DATA_DIR, "states.json"), "r", encoding="utf-8") as f:
+    states_json = json.load(f)
 
 
 def load_data(
@@ -98,3 +115,57 @@ def load_data(
         super_df = super_df.union(df)
 
     return super_df
+
+
+
+def match_location_with_country_by_city(
+    location: str, cities: dict = cities_json, countries: dict = countries_json
+):
+    # Match the city name with the list of cities.
+    country = None
+    max_ratio = 0.0
+    for c in cities:
+        for word in location.split():
+            current_ratio = ratio(word, c["city"])
+            if current_ratio >= 0.8 and current_ratio > max_ratio:
+                country = c["country_name"]
+                break
+    if country:
+        country = [c["iso3"] for c in countries if country["name"] == country][0]
+    return country
+
+
+def match_location_with_country_by_state(
+    location: str, states: dict = states_json, countries: dict = countries_json
+):
+    country = None
+    max_ratio = 0
+    for s in states:
+        for word in location.split():
+            current_ratio = ratio(word, s["name"])
+            if current_ratio >= 0.8 and current_ratio > max_ratio:
+                country = s["country_name"]
+                break
+    if country:
+        country = [c["iso3"] for c in countries if country["name"] == country][0]
+    return country
+
+
+def match_location_with_country_by_country(
+    location: str, countries: dict = countries_json
+):
+    country = None
+    max_ratio = 0
+    for c in countries:
+        for word in location.split():
+            # Test if the word is in the ISO3 code.
+            if word.lower() == c["iso3"].lower():
+                country = c["iso3"]
+                break
+            # Test if the word is in the country name.
+            current_ratio = ratio(word, c["name"])
+            if current_ratio >= 0.8 and current_ratio > max_ratio:
+                country = c["iso3"]
+                break
+
+    return country

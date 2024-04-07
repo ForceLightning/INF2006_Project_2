@@ -6,18 +6,29 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Task 3",
+            "name": "Task 3: Java",
             "request": "launch",
             "mainClass": "com.inf2006.team6.Main",
             "projectName": "task_3",
             "args": [
-                "data/processed/part-00000-d805e8ca-ef63-4448-9dce-5238a38fb1a6-c000.csv",
+                "data/task_3_test/part-00000-11129dbd-8eba-4b3e-8a7d-cf3f4bbfe25a-c000.csv",
                 // "data/combined_csv.csv",
                 // "data/processed.csv",
                 "output",
                 "data/ISO-3166-alpha3.tsv",
                 5,
                 "negative"
+            ]
+        },
+        {
+            "type": "debugpy",
+            "name": "Task 3: Python Preprocessing",
+            "request": "launch",
+            "module": "task_3.Task3-preprocessing",
+            "args": [
+                "--data_dir=${workspaceFolder}\\data",
+                "--output_dir=${workspaceFolder}\\output\\task_3_test",
+                "--processed_csv_dir=${workspaceFolder}\\data\\processed",
             ]
         }
     ]
