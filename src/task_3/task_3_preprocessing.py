@@ -2,8 +2,10 @@
 MapReduce job.
 """
 
+import argparse
 import json
 import os
+from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
@@ -16,11 +18,6 @@ from shapely.geometry import Point
 
 DATA_DIR = "data"
 PROCESSED_CSV_DIR = os.path.join(DATA_DIR, "processed")
-PROCESSED_CSV = [
-    os.path.join(PROCESSED_CSV_DIR, file)
-    for file in os.listdir(PROCESSED_CSV_DIR)
-    if file.endswith(".csv")
-]
 OUTPUT_DIR = os.path.join(DATA_DIR, "task_3")
 
 
@@ -57,18 +54,36 @@ def ckdnearest(
     )
 
 
-def main():
+def main(
+    data_dir: str | os.PathLike | Path = DATA_DIR,
+    processed_csv_dir: str | os.PathLike | Path = PROCESSED_CSV_DIR,
+    output_dir: str | os.PathLike | Path = OUTPUT_DIR,
+):
     """The main function that reads the processed CSV file, extracts the
     latitude and longitude, city name, to determine the country code (ISO3166)
     and writes the output to a CSV file in the output directory.
+
+    :param data_dir: Directory which stores all the data, defaults to DATA_DIR
+    :type data_dir: str | os.PathLike | Path, optional
+    :param processed_csv_dir: Directory which stores the processed csv from task 1,
+        defaults to PROCESSED_CSV_DIR
+    :type processed_csv_dir: str | os.PathLike | Path, optional
+    :param output_dir: Output directory for the processed dataset ready for MapReduce,
+        defaults to OUTPUT_DIR
+    :type output_dir: str | os.PathLike | Path, optional
     """
+    processed_csv = [
+        os.path.join(processed_csv_dir, file)
+        for file in os.listdir(processed_csv_dir)
+        if file.endswith(".csv")
+    ]
     spark = (
         SparkSession.builder.appName("Airline Twitter Sentiment Analysis")
         .config("spark.driver.memory", "8g")
         .getOrCreate()
     )
 
-    df = spark.read.csv(PROCESSED_CSV, header=True, inferSchema=True)
+    df = spark.read.csv(processed_csv, header=True, inferSchema=True)
 
     df = df.withColumn(
         "latitude",
@@ -108,12 +123,12 @@ def main():
     )
     latlong_pddf = latlong_df.select("index", "latitude", "longitude").toPandas()
 
-    with open(os.path.join(DATA_DIR, "cities.json"), "r", encoding="utf-8") as f:
+    with open(os.path.join(data_dir, "cities.json"), "r", encoding="utf-8") as f:
         cities = json.load(f)
         cities = pd.DataFrame.from_records(cities, index="id")
         cities_df = spark.createDataFrame(cities).dropDuplicates(["name"])
 
-    with open(os.path.join(DATA_DIR, "countries.json"), "r", encoding="utf-8") as f:
+    with open(os.path.join(data_dir, "countries.json"), "r", encoding="utf-8") as f:
         countries = json.load(f)
         for country in countries:
             del country["timezones"]
@@ -188,9 +203,13 @@ def main():
     )
 
     merged_indexed_df.repartition(1).write.csv(
-        os.path.join(OUTPUT_DIR), header=True, mode="overwrite", quote='"'
+        os.path.join(output_dir), header=True, mode="overwrite", quote='"'
     )
 
 
 if __name__ == "__main__":
-    main()
+    args = argparse.ArgumentParser()
+    args.add_argument("--data_dir", type=str, default=DATA_DIR)
+    args.add_argument("--processed_csv_dir", type=str, default=PROCESSED_CSV_DIR)
+    args.add_argument("--output_dir", type=str, default=OUTPUT_DIR)
+    main(**vars(args.parse_args()))
