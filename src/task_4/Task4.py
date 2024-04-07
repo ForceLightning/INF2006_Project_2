@@ -5,7 +5,11 @@ findspark.init()
 import pyspark
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
-from load_clean_data import load_clean_data
+import sys
+
+DIR = "src/"
+sys.path.append(DIR)
+from utils.load_clean_data import load_clean_data
 
 # Task 4 : To calculate the mean and median values of the trusting points for each channel.
 if __name__ == "__main__":
@@ -26,7 +30,7 @@ if __name__ == "__main__":
 
     # output results to a csv file
     df_grouped.repartition(1).write.csv(
-        "task4_output_csv", header=True, mode="overwrite", quote='"'
+        DIR + "task_4/output", header=True, mode="overwrite", quote='"'
     )
 
     # stop the spark session
