@@ -13,6 +13,7 @@ class SentimentAnalysis:
         self.sid_obj = SentimentIntensityAnalyzer()
         self.threshold = 0.1
         self.increased_threshold = 0.2
+        self.decresed_threshold = 0.05
         self.stop_words = set(nltk.corpus.stopwords.words('english'))
         self.negations = {"not", "never", "no", "nobody",
                           "none", "nor", "nothing", "nowhere"}
@@ -136,10 +137,6 @@ class SentimentAnalysis:
         tokenized_text = word_tokenize(sentence)
         tagged_text = pos_tag(tokenized_text)
 
-        # Remove stop words
-        tagged_text = [(word, tag) for word,
-                       tag in tagged_text if word.lower() not in self.stop_words]
-
         pos_score = 0
         neg_score = 0
         token_count = 0
@@ -225,6 +222,48 @@ class SentimentAnalysis:
         if normalized_score >= self.increased_threshold:
             return "positive"
         elif normalized_score <= -self.increased_threshold:
+            return "negative"
+        else:
+            return "neutral"
+
+    def get_sentiment_lower_threshold(self, sentence):
+        if not sentence:
+            return None
+
+        tokenized_text = word_tokenize(sentence)
+        tagged_text = pos_tag(tokenized_text)
+
+        pos_score = 0
+        neg_score = 0
+        token_count = 0
+
+        for word, tag in tagged_text:
+            wn_tag = self.get_wordnet_pos(tag)
+            if wn_tag not in (wn.NOUN, wn.ADJ, wn.ADV):
+                continue
+
+            lemma = wn.lemmas(word, pos=wn_tag)
+            if not lemma:
+                continue
+
+            lemma = lemma[0]
+            synset = lemma.synset()
+            swn_synset = swn.senti_synset(synset.name())
+
+            pos_score += swn_synset.pos_score()
+            neg_score += swn_synset.neg_score()
+            token_count += 1
+
+        # Normalize the score to be between -1 and 1
+        if token_count:
+            normalized_score = (pos_score - neg_score) / token_count
+        else:
+            normalized_score = 0
+
+        # Return negative, neutral or positive based on the normalized score
+        if normalized_score >= self.decresed_threshold:
+            return "positive"
+        elif normalized_score <= -self.decresed_threshold:
             return "negative"
         else:
             return "neutral"

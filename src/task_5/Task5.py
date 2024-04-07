@@ -16,6 +16,7 @@ from pyspark.sql.types import FloatType, StringType
 
 from task_5.sentiment_analysis import SentimentAnalysis
 from utils.load_clean_data import load_clean_data
+from utils.util import load_data, deduplicate_data
 
 nltk.download("sentiwordnet")
 nltk.download("wordnet")
@@ -32,10 +33,22 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
         "Airline Twitter Sentiment Analysis"
     ).getOrCreate()
 
-    df = load_clean_data(
+    deduplicate_data(
         data_dir=data_dir,
-        spark_session=spark,
-        save_to_dir=os.path.join(data_dir, "processed", "task_5"),
+        spark=spark,
+        output_dir=os.path.join(data_dir, "processed", "task_5"),
+        columns_to_drop=[
+            "_region",
+            "_city",
+            "_tainted",
+            "most_common_user_timezone",
+        ]
+    )
+
+    df = spark.read.csv(
+        os.path.join(data_dir, "processed", "task_5"),
+        header=True,
+        inferSchema=True,
     )
 
     sentiment_class = SentimentAnalysis()
@@ -65,6 +78,12 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
     )
 
     df = df.withColumn(
+        "get_sentiment_lower_threshold",
+        udf(sentiment_class.get_sentiment_lower_threshold,
+            StringType())(col("text")),
+    )
+
+    df = df.withColumn(
         "get_sentiment_vader",
         udf(sentiment_class.get_sentiment_vader, StringType())(col("text")),
     )
@@ -74,6 +93,7 @@ def run(data_dir: Optional[str | os.PathLike | Path]):
         "sentiment_without_stop_words",
         "get_sentiment_inverse_if_negative",
         "get_sentiment_higher_threshold",
+        "get_sentiment_lower_threshold",
         "get_sentiment_vader",
     ]
 
