@@ -22,13 +22,13 @@ pipenv install
 # Usage
 For UNIX, run:
 ```shell
-PYTHONPATH=./src python -m task_1.Task1 --data_dir=$(pwd)/data
+PYTHONPATH=./src python -m task_4.Task4 
 ```
 For Windows, run:
 ```shell
-$env:PYTHONPATH = './src'; python -m task_1.Task1 --data_dir=$(pwd)/data
+$env:PYTHONPATH = './src'; python -m task_4.Task4
 ```
 If dependencies are installed with Pipenv, setup the `.env` file with the environment variables set. An example is given in [example.env](/example.env)
 ```shell
-pipenv run python -m task_1.Task1 --data_dir=$(pwd)/data
+pipenv run python -m task_4.Task4
 ```
