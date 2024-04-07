@@ -22,10 +22,10 @@
             "mainClass": "com.inf2006.team6.Task3",
             "projectName": "task_3",
             "args": [
-                "data/task_3/part-00000-4d3c7878-6821-4218-af13-74ccaf6572e7-c000.csv",
+                "data/task_3/part-00000-c5591409-7d76-47a1-9a27-a6eb51468804-c000.csv",
                 "output/task_3",
                 "data/ISO-3166-alpha3.tsv",
-                5,
+                15,
                 "negative"
             ]
         },
@@ -33,12 +33,15 @@
             "type": "debugpy",
             "name": "Debug Task 3: Python Preprocessing",
             "request": "launch",
-            "module": "task_3.Task3-preprocessing",
+            "module": "task_3.task_3_preprocessing",
             "args": [
                 "--data_dir=${workspaceFolder}\\data",
-                "--output_dir=${workspaceFolder}\\output\\task_3",
+                "--output_dir=${workspaceFolder}\\data\\task_3",
                 "--processed_csv_dir=${workspaceFolder}\\data\\processed\\task_3",
-            ]
+            ],
+            "env": {
+                "PYTHONPATH": "./src"
+            }
         },
     ]
 }

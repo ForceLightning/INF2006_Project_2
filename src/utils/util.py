@@ -115,6 +115,7 @@ def deduplicate_data(
     output_dir: Optional[str | os.PathLike | Path] = None,
     columns_to_drop: Optional[list[str]] = None,
     remove_newline: bool = False,
+    fill_na: bool = True,
 ) -> None:
     """De-duplicates the data, processes timestamps, and writes the processed data to a CSV file.
 
@@ -196,38 +197,25 @@ def deduplicate_data(
     )
 
     # Filling missing values in the 'airline_sentiment_gold' column with Unknown
-    df_deduplicated = df_deduplicated.withColumn(
-        "airline_sentiment_gold",
-        F.when(F.col("airline_sentiment_gold").isNull(), "Unknown").otherwise(
-            F.col("airline_sentiment_gold")
-        ),
-    )
-    # Filling missing values in the 'tweet_location' column with Unknown
-    df_deduplicated = df_deduplicated.withColumn(
-        "tweet_location",
-        F.when(F.col("tweet_location").isNull(), "Unknown").otherwise(
-            F.col("tweet_location")
-        ),
-    )
-    # Filling missing values in the 'tweet_coord' column with Unknown
-    df_deduplicated = df_deduplicated.withColumn(
-        "tweet_coord",
-        F.when(F.col("tweet_coord").isNull(), "Unknown").otherwise(
-            F.col("tweet_coord")
-        ),
-    )
-    # Fill missing values in 'user_timezone' with 'Unknown'
-    df_deduplicated = df_deduplicated.withColumn(
-        "user_timezone",
-        F.when(F.col("user_timezone").isNull(), "Unknown").otherwise(
-            F.col("user_timezone")
-        ),
-    )
-    # Fill missing values in '_country' with 'Unknown'
-    df_deduplicated = df_deduplicated.withColumn(
-        "_country",
-        F.when(F.col("_country").isNull(), "Unknown").otherwise(F.col("_country")),
-    )
+    if fill_na:
+        df_deduplicated = df_deduplicated.withColumn(
+            "airline_sentiment_gold",
+            F.when(F.col("airline_sentiment_gold").isNull(), "Unknown").otherwise(
+                F.col("airline_sentiment_gold")
+            ),
+        )
+        # Fill missing values in 'user_timezone' with 'Unknown'
+        df_deduplicated = df_deduplicated.withColumn(
+            "user_timezone",
+            F.when(F.col("user_timezone").isNull(), "Unknown").otherwise(
+                F.col("user_timezone")
+            ),
+        )
+        # Fill missing values in '_country' with 'Unknown'
+        df_deduplicated = df_deduplicated.withColumn(
+            "_country",
+            F.when(F.col("_country").isNull(), "Unknown").otherwise(F.col("_country")),
+        )
 
     # Filling missing values in the '_missed' column with False
     df_deduplicated = df_deduplicated.withColumn(
@@ -305,12 +293,16 @@ def deduplicate_data(
     # Left join to fill missing values in 'user_timezone' with the most common value for the corresponding country
     df_deduplicated = df_deduplicated.join(
         most_common_user_timezone, on="_country", how="left"
-    ).withColumn(
-        "user_timezone",
-        F.coalesce(
-            F.col("user_timezone"), F.col("most_common_user_timezone"), F.lit("Unknown")
-        ),
     )
+    if fill_na:
+        df_deduplicated = df_deduplicated.withColumn(
+            "user_timezone",
+            F.coalesce(
+                F.col("user_timezone"),
+                F.col("most_common_user_timezone"),
+                F.lit("Unknown"),
+            ),
+        )
 
     # Drop the intermediate 'grouped_df' DataFrame
     grouped_df.unpersist()
@@ -318,10 +310,6 @@ def deduplicate_data(
     # Drop inconsistent data columns and columns that have been split
     # _tainted is dropped because all the values are False after deduplication
     df_deduplicated = df_deduplicated.drop(*columns_to_drop)
-
-    df_deduplicated = df_deduplicated.dropna(
-        subset=["tweet_location", "tweet_coord"], how="all"
-    )
 
     if remove_newline:
         df_deduplicated = df_deduplicated.withColumn(

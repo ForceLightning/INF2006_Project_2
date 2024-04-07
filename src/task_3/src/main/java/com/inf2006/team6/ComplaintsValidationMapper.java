@@ -39,6 +39,15 @@ public class ComplaintsValidationMapper extends Mapper<LongWritable, Text, LongW
         String[] parts = line.split(",");
         String headerInvalidator = context.getConfiguration().get("header_column_idx_0");
         int expectedLength = context.getConfiguration().getInt("num_columns", 21);
-        return parts.length == expectedLength && !parts[0].equals(headerInvalidator);
+        int sentimentIndex = context.getConfiguration().getInt("sentiment_idx", 11);
+        boolean sentimentValid = true;
+        try {
+            SentimentEnum sentiment = SentimentEnum.valueOf(parts[sentimentIndex].toUpperCase());
+            sentimentValid = sentiment != null;
+        } catch (IllegalArgumentException e) {
+            sentimentValid = false;
+        }
+        return parts.length == expectedLength
+                && !parts[0].equals(headerInvalidator) & sentimentValid;
     }
 }

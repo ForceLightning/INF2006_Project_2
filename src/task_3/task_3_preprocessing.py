@@ -314,8 +314,8 @@ def load_cities_countries_json(
                 del country["timezones"]
                 del country["translations"]
             countries = pd.DataFrame.from_records(countries, index="id")
-            countries["longitude"] = cities["longitude"].astype(float)
-            countries["latitude"] = cities["latitude"].astype(float)
+            countries["longitude"] = countries["longitude"].astype(float)
+            countries["latitude"] = countries["latitude"].astype(float)
             countries_df = spark.createDataFrame(countries)
     except FileNotFoundError as exc:
         raise FileNotFoundError(
