@@ -11,12 +11,41 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import java.io.StringReader;
 
+/**
+ * Mapper class for Task 2.
+ */
 public class TopReasonsMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+    /**
+     * Logger for the class.
+     */
     private static final Logger LOG = Logger.getLogger(TopReasonsMapper.class);
+
+    /**
+     * IntWritable object to store the value 1.
+     */
     private static final IntWritable one = new IntWritable(1);
+
+    /**
+     * Text object to store the composite key.
+     */
     private Text compositeKey = new Text();
+
+    /**
+     * Boolean to check if the header has been processed.
+     */
     private boolean isHeaderProcessed = false;
 
+    /**
+     * Map function for TopReasonsMapper. This function extracts the airline and negative reason
+     * from the input file and writes it to the context. It checks if the airline and negative
+     * reason are valid before writing to the context.
+     *
+     * @param key line number.
+     * @param value line of text.
+     * @param context context of the job.
+     * @throws IOException if an I/O error occurs.
+     * @throws InterruptedException if the thread is interrupted.
+     */
     @Override
     public void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
