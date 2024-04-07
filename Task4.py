@@ -1,3 +1,6 @@
+import findspark
+findspark.init()
+
 import pyspark
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
@@ -14,11 +17,11 @@ if __name__ == "__main__":
     df = load_clean_data("./data", spark)
     
     # Group by channel and calculate the mean and median of the trusting points
-    df_grouped = df.groupBy("channel").agg(
-        mean_trusting = ("trusting", "mean"),
-        median_trusting = ("trusting", "median")
+    df_grouped = df.groupBy("_channel").agg(
+        F.mean("_trust").alias("mean_trusting_points"),
+        F.median("_trust").alias("median_trusting_points")
     )
     
     # Show the results
-    df_grouped.show()
+    print(df_grouped.head(10))
     
