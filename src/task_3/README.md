@@ -21,6 +21,8 @@ pipenv install
 
 # Usage
 ## Preprocessing
+Firstly, download the `cities.json` and `countries.json` files from [this repo](https://github.com/dr5hn/countries-states-cities-database/) and place them in the `data` directory from the project root.
+
 For UNIX, run:
 ```shell
 PYTHONPATH=./src python -m task_3.task_3_preprocessing --data_dir=$(pwd)/data --output_dir=$(pwd)/data/task_3 --processed_csv_dir=$(pwd)/data/processed/task_3

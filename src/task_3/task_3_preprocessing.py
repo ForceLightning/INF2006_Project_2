@@ -23,6 +23,8 @@ DATA_DIR = "data"
 PROCESSED_CSV_DIR = os.path.join(DATA_DIR, "processed")
 OUTPUT_DIR = os.path.join(DATA_DIR, "task_3")
 
+__author__ = "Christopher Kok"
+
 
 def ckdnearest(
     gd_a: gpd.GeoDataFrame, gd_b: gpd.GeoDataFrame, threshold: float

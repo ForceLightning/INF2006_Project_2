@@ -22,7 +22,7 @@
             "mainClass": "com.inf2006.team6.Task3",
             "projectName": "task_3",
             "args": [
-                "data/task_3/part-00000-11129dbd-8eba-4b3e-8a7d-cf3f4bbfe25a-c000.csv",
+                "data/task_3/part-00000-4d3c7878-6821-4218-af13-74ccaf6572e7-c000.csv",
                 "output/task_3",
                 "data/ISO-3166-alpha3.tsv",
                 5,

@@ -16,12 +16,15 @@ from pyspark.sql.types import (
     StringType,
     StructField,
     StructType,
-    TimestampType
+    TimestampType,
 )
 from tqdm.auto import tqdm
 
 DATA_DIR = "data"
 SENTIMENT_DATA_DIR = "Twitter_Airline Dataset/sentiment"
+
+__author__ = ["Kok Yong En Christopher", "Jurgen Tan Yu Teng"]
+
 
 def load_data(
     data_dir: str | os.PathLike = DATA_DIR, spark_session: Optional[SparkSession] = None

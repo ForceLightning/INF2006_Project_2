@@ -1,3 +1,6 @@
+"""This module contains the code for the preprocessing task for the Twitter Airline dataset.
+"""
+
 import argparse
 import os
 from typing import Optional
@@ -7,8 +10,17 @@ from pyspark.sql import SparkSession
 
 from utils.util import load_data
 
+__author__ = "Jurgen Tan Yu Teng"
+
 
 def main(data_dir: str, output_dir: Optional[str] = None):
+    """Runs the preprocessing task for the Twitter Airline dataset.
+
+    :param data_dir: Path to the data directory
+    :type data_dir: str
+    :param output_dir: Path to the output directory, defaults to None
+    :type output_dir: Optional[str], optional
+    """
     # Create a SparkSession
     spark = SparkSession.builder.appName(
         "Airline Twitter Sentiment Analysis"

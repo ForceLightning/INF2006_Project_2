@@ -1,3 +1,7 @@
+"""This module contains the code for the sentiment analysis task for the Twitter Airline dataset.
+"""
+
+from typing import Literal
 import nltk
 from nltk.corpus import wordnet as wn
 from nltk.corpus import sentiwordnet as swn
@@ -6,19 +10,29 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+__author__ = "Cheng Yi Xing"
+
 
 class SentimentAnalysis:
     """
     A class for performing sentiment analysis on text.
 
-    Attributes:
-        lemmatizer (WordNetLemmatizer): A lemmatizer object for lemmatizing words.
-        sid_obj (SentimentIntensityAnalyzer): A sentiment intensity analyzer object for VADER sentiment analysis.
-        threshold (float): The threshold value for determining positive, negative, or neutral sentiment.
-        increased_threshold (float): The increased threshold value for determining positive or negative sentiment.
-        decreased_threshold (float): The decreased threshold value for determining positive or negative sentiment.
-        stop_words (set): A set of stop words for removing from the text.
-        negations (set): A set of negation words for handling negation in sentiment analysis.
+    :ivar lemmatizer: A lemmatizer object for lemmatizing words.
+    :vartype lemmatizer: WordNetLemmatizer
+    :ivar sid_obj: A sentiment intensity analyzer object for VADER sentiment analysis.
+    :vartype sid_obj: SentimentIntensityAnalyzer
+    :ivar threshold: The threshold value for determining positive, negative, or neutral sentiment.
+    :vartype threshold: float
+    :ivar increased_threshold: The increased threshold value for determining
+        positive or negative sentiment.
+    :vartype increased_threshold: float
+    :ivar decreased_threshold: The decreased threshold value for determining
+        positive or negative sentiment.
+    :vartype decreased_threshold: float
+    :ivar stop_words: A set of stop words for removing from the text.
+    :vartype stop_words: set
+    :ivar negations: A set of negation words for handling negation in sentiment analysis.
+    :vartype negations: set
     """
 
     def __init__(self):
@@ -27,62 +41,66 @@ class SentimentAnalysis:
         self.threshold = 0.1
         self.increased_threshold = 0.2
         self.decreased_threshold = 0.05
-        self.stop_words = set(nltk.corpus.stopwords.words('english'))
-        self.negations = {"not", "never", "no", "nobody",
-                          "none", "nor", "nothing", "nowhere"}
+        self.stop_words = set(nltk.corpus.stopwords.words("english"))
+        self.negations = {
+            "not",
+            "never",
+            "no",
+            "nobody",
+            "none",
+            "nor",
+            "nothing",
+            "nowhere",
+        }
 
-    def get_wordnet_pos(self, treebank_tag):
+    def get_wordnet_pos(self, treebank_tag: str) -> str | None:
+        """Maps the treebank part-of-speech tags to WordNet part-of-speech tags.
+
+        :param treebank_tag: The treebank part-of-speech tag.
+        :type treebank_tag: str
+        :return: The corresponding WordNet part-of-speech tag, or None if no mapping is found.
+        :rtype: str or None
         """
-        Maps the treebank part-of-speech tags to WordNet part-of-speech tags.
-
-        Parameters:
-            treebank_tag (str): The treebank part-of-speech tag.
-
-        Returns:
-            str or None: The corresponding WordNet part-of-speech tag, or None if no mapping is found.
-        """
-        if treebank_tag.startswith('J'):
+        if treebank_tag.startswith("J"):
             return wn.ADJ
-        elif treebank_tag.startswith('V'):
+        elif treebank_tag.startswith("V"):
             return wn.VERB
-        elif treebank_tag.startswith('N'):
+        elif treebank_tag.startswith("N"):
             return wn.NOUN
-        elif treebank_tag.startswith('R'):
+        elif treebank_tag.startswith("R"):
             return wn.ADV
         else:
             return None
 
-    def get_sentiment_vader(self, sentence):
-        """
-        Get the sentiment of a sentence using VADER sentiment analysis.
+    def get_sentiment_vader(self, sentence: str) -> str | None:
+        """Get the sentiment of a sentence using VADER sentiment analysis.
 
-        Args:
-            sentence (str): The sentence to analyze.
-
-        Returns:
-            str: The sentiment of the sentence. Possible values are "positive", "negative", or "neutral".
-                Returns None if the sentence is empty.
+        :param sentence: The sentence to analyze.
+        :type sentence: str
+        :return: The sentiment of the sentence. Possible values are
+            "positive", "negative", or "neutral".
+        :rtype: str | None
         """
         if not sentence:
             return None
         sentiment_dict = self.sid_obj.polarity_scores(sentence)
 
-        if sentiment_dict['compound'] >= 0.05:
+        if sentiment_dict["compound"] >= 0.05:
             return "positive"
-        elif sentiment_dict['compound'] <= -0.05:
+        elif sentiment_dict["compound"] <= -0.05:
             return "negative"
         else:
             return "neutral"
 
-    def get_sentiment(self, sentence):
-        """
-        Analyzes the sentiment of a given sentence.
+    def get_sentiment(
+        self, sentence: str
+    ) -> Literal["positive", "negative", "neutral"] | None:
+        """Analyzes the sentiment of a given sentence.
 
-        Parameters:
-        sentence (str): The sentence to be analyzed.
-
-        Returns:
-        str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :param sentence: The input sentence to analyze.
+        :type sentence: str
+        :return: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :rtype: str
         """
         if not sentence:
             return None
@@ -125,15 +143,15 @@ class SentimentAnalysis:
         else:
             return "neutral"
 
-    def get_sentiment_stop_words_removed(self, sentence):
-        """
-        Calculates the sentiment of a given sentence after removing stop words.
+    def get_sentiment_stop_words_removed(
+        self, sentence: str
+    ) -> Literal["positive", "negative", "neutral"] | None:
+        """Calculates the sentiment of a given sentence after removing stop words.
 
-        Args:
-            sentence (str): The input sentence.
-
-        Returns:
-            str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :param sentence: The input sentence to analyze.
+        :type sentence: str
+        :return: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :rtype: str | None
         """
         if not sentence:
             return None
@@ -142,8 +160,11 @@ class SentimentAnalysis:
         tagged_text = pos_tag(tokenized_text)
 
         # Remove stop words
-        tagged_text = [(word, tag) for word,
-                       tag in tagged_text if word.lower() not in self.stop_words]
+        tagged_text = [
+            (word, tag)
+            for word, tag in tagged_text
+            if word.lower() not in self.stop_words
+        ]
 
         pos_score = 0
         neg_score = 0
@@ -180,16 +201,16 @@ class SentimentAnalysis:
         else:
             return "neutral"
 
-    def get_sentiment_inverse_if_negative(self, sentence):
-        """
-        Calculates the sentiment of a given sentence using the SentiWordNet lexicon.
-        If the sentiment is negative, the scores are inverted.
+    def get_sentiment_inverse_if_negative(
+        self, sentence: str
+    ) -> Literal["positive", "negative", "neutral"] | None:
+        """Calculates the sentiment of a given sentence using the SentiWordNet lexicon.
+            If the sentiment is negative, the scores are inverted.
 
-        Parameters:
-        sentence (str): The sentence to analyze.
-
-        Returns:
-        str: The sentiment of the sentence. Can be "positive", "negative", or "neutral".
+        :param sentence: The input sentence to analyze.
+        :type sentence: str
+        :return: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :rtype: str | None
         """
         if not sentence:
             return None
@@ -244,15 +265,15 @@ class SentimentAnalysis:
         else:
             return "neutral"
 
-    def get_sentiment_higher_threshold(self, sentence):
-        """
-        Calculates the sentiment of a given sentence using a higher threshold.
+    def get_sentiment_higher_threshold(
+        self, sentence: str
+    ) -> Literal["positive", "negative", "neutral"] | None:
+        """Calculates the sentiment of a given sentence using a higher threshold.
 
-        Args:
-            sentence (str): The input sentence to analyze.
-
-        Returns:
-            str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :param sentence: The input sentence to analyze.
+        :type sentence: str
+        :return: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :rtype: str | None
         """
         if not sentence:
             return None
@@ -295,15 +316,15 @@ class SentimentAnalysis:
         else:
             return "neutral"
 
-    def get_sentiment_lower_threshold(self, sentence):
-        """
-        Calculates the sentiment of a given sentence based on a lower threshold.
+    def get_sentiment_lower_threshold(
+        self, sentence: str
+    ) -> Literal["positive", "negative", "neutral"] | None:
+        """Calculates the sentiment of a given sentence based on a lower threshold.
 
-        Args:
-            sentence (str): The input sentence to analyze.
-
-        Returns:
-            str: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :param sentence: The input sentence to analyze.
+        :type sentence: str
+        :return: The sentiment of the sentence, which can be "positive", "negative", or "neutral".
+        :rtype: str | None
         """
         if not sentence:
             return None
@@ -339,9 +360,9 @@ class SentimentAnalysis:
             normalized_score = 0
 
         # Return negative, neutral or positive based on the normalized score
-        if normalized_score >= self.decresed_threshold:
+        if normalized_score >= self.decreased_threshold:
             return "positive"
-        elif normalized_score <= -self.decresed_threshold:
+        elif normalized_score <= -self.decreased_threshold:
             return "negative"
         else:
             return "neutral"

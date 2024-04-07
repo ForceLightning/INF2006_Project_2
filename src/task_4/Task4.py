@@ -1,6 +1,10 @@
-import pyspark
+"""This module contains the code for Task 4 of the assignment.
+"""
+
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
+
+__author__ = "Wong Yok Hung"
 
 # import sys
 

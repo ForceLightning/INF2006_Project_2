@@ -166,3 +166,10 @@ data/*.csv
 
 # MapReduce Output
 output/
+
+# Sphinx documentation
+docs/build/
+
+!docs/source/conf.py
+docs/source/*.rst
+!docs/source/index.rst
