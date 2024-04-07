@@ -1,3 +1,5 @@
+package com.inf2006.team6;
+
 import java.io.IOException;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -33,9 +35,9 @@ public class TopReasonsMapper extends Mapper<LongWritable, Text, Text, IntWritab
         // Go thru each CSV record
         for (CSVRecord record : parser) {
             // Extract the airline and negative reason using column numbers
-            String airline = record.get(14).trim(); 
-            String negativeReason1 = record.get(21).trim();
-            String negativeReason2 = record.get(22).trim();
+            String airline = record.get(12).trim(); 
+            String negativeReason1 = record.get(22).trim();
+            String negativeReason2 = record.get(23).trim();
             String negativeReason = negativeReason1.equals("Unknown") ? negativeReason2 : negativeReason1;
             compositeKey.set(airline + "_" + negativeReason);
             context.write(compositeKey, one);

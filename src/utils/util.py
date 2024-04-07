@@ -1,6 +1,7 @@
 """This module contains utility functions for the project.
 """
 
+import argparse
 import os
 from pathlib import Path
 from typing import Optional
@@ -109,6 +110,7 @@ def deduplicate_data(
     spark: Optional[SparkSession] = None,
     output_dir: Optional[str | os.PathLike | Path] = None,
     columns_to_drop: Optional[list[str]] = None,
+    remove_newline: bool = False,
 ) -> None:
     """De-duplicates the data, processes timestamps, and writes the processed data to a CSV file.
 
@@ -298,6 +300,14 @@ def deduplicate_data(
         subset=["tweet_location", "tweet_coord"], how="all"
     )
 
+    if remove_newline:
+        df_deduplicated = df_deduplicated.withColumn(
+            "text", F.regexp_replace("text", "\n|\r|\t", " ")
+        ).withColumn(
+            "negativereason_gold",
+            F.regexp_replace("negativereason_gold", "\n|\r|\t", ","),
+        )
+
     # Show the resulting DataFrame
     # df_deduplicated.show()
 
@@ -305,5 +315,14 @@ def deduplicate_data(
     # df_deduplicated.write.csv('./Twitter_Airline Dataset/processed', header=True, mode='overwrite')
 
     df_deduplicated.repartition(1).write.csv(
-        "./data/processed", header=True, mode="overwrite", quote='"'
+        output_dir, header=True, mode="overwrite", quote='"'
     )
+
+
+if __name__ == "__main__":
+    args = argparse.ArgumentParser(description="Process the data")
+    args.add_argument("--data_dir", type=str, default=DATA_DIR)
+    args.add_argument("--output_dir", type=str, default=None)
+    args.add_argument("--remove_newline", default=False, action="store_true")
+    args.add_argument("--columns_to_drop", nargs='+', type=list[str], default=None)
+    deduplicate_data(**vars(args.parse_args()))

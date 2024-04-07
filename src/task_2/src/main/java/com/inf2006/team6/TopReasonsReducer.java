@@ -1,3 +1,5 @@
+package com.inf2006.team6;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

@@ -6,13 +6,24 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Debug Task 2: Java",
+            "request": "launch",
+            "mainClass": "com.inf2006.team6.Task2",
+            "projectName": "task_2",
+            "args": [
+                "data/processed/task_2/part-00000-0a3f36b7-88c3-47c2-8c50-de5ed4e348d1-c000.csv",
+                "output/task_2",
+            ]
+        },
+        {
+            "type": "java",
             "name": "Debug Task 3: Java",
             "request": "launch",
-            "mainClass": "com.inf2006.team6.Main",
+            "mainClass": "com.inf2006.team6.Task3",
             "projectName": "task_3",
             "args": [
-                "data/task_3_test/part-00000-11129dbd-8eba-4b3e-8a7d-cf3f4bbfe25a-c000.csv",
-                "output",
+                "data/task_3/part-00000-11129dbd-8eba-4b3e-8a7d-cf3f4bbfe25a-c000.csv",
+                "output/task_3",
                 "data/ISO-3166-alpha3.tsv",
                 5,
                 "negative"
@@ -26,7 +37,7 @@
             "args": [
                 "--data_dir=${workspaceFolder}\\data",
                 "--output_dir=${workspaceFolder}\\output\\task_3",
-                "--processed_csv_dir=${workspaceFolder}\\data\\processed",
+                "--processed_csv_dir=${workspaceFolder}\\data\\processed\\task_3",
             ]
         },
     ]

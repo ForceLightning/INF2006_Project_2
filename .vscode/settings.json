@@ -9,5 +9,7 @@
     ],
     "python.analysis.extraPaths": [
         "./src"
-    ]
+    ],
+    "maven.view": "hierarchical",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

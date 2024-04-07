@@ -19,7 +19,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 /**
  * Main class to execute the job.
  */
-public class Main {
+public class Task3 {
     /**
      * Gets the index of a column in the header.
      *
@@ -120,7 +120,7 @@ public class Main {
 
         // Create the job instance.
         Job job = Job.getInstance(conf, "Complaints Analytics");
-        job.setJarByClass(Main.class);
+        job.setJarByClass(Task3.class);
 
         // Add the country codes file to the distributed cache.
         //

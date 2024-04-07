@@ -1,3 +1,5 @@
+package com.inf2006.team6;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
