@@ -127,7 +127,7 @@ def deduplicate_data(
     if not columns_to_drop:
         columns_to_drop = [
             "airline_sentiment_gold",
-            "negative_reason_gold",
+            "negativereason_gold",
             "negativereason",
             "_region",
             "_city",
