@@ -1,0 +1,13 @@
+{
+    "autoDocstring.docstringFormat": "sphinx",
+    "python.analysis.useLibraryCodeForTypes": false,
+    "python.autoComplete.extraPaths": [
+        "./src"
+    ],
+    "pylint.args": [
+        "--rcfile=.pylintrc"
+    ],
+    "python.analysis.extraPaths": [
+        "./src"
+    ]
+}

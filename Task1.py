@@ -1,7 +1,7 @@
 import pandas as pd
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
-from util import load_data
+from utils.util import load_data
 
 # Create a SparkSession
 spark = SparkSession.builder.appName("Airline Twitter Sentiment Analysis").getOrCreate()
