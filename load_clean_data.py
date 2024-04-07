@@ -28,7 +28,8 @@ def load_clean_data(
     """
 
     if not data_dir and not save_to_dir:
-        raise ValueError("At least one of data_dir or save_to_dir must be provided")
+        raise ValueError(
+            "At least one of data_dir or save_to_dir must be provided")
 
     spark_session = (
         spark_session
@@ -164,7 +165,8 @@ def load_clean_data(
 
     # Get the most common user_timezone for each country
     most_common_user_timezone = grouped_df.groupBy("_country").agg(
-        F.collect_list("user_timezone").getItem(0).alias("most_common_user_timezone")
+        F.collect_list("user_timezone").getItem(
+            0).alias("most_common_user_timezone")
     )
 
     # Left join to fill missing values in 'user_timezone' with the most common value for the corresponding country
@@ -173,7 +175,8 @@ def load_clean_data(
     ).withColumn(
         "user_timezone",
         F.coalesce(
-            F.col("user_timezone"), F.col("most_common_user_timezone"), F.lit("Unknown")
+            F.col("user_timezone"), F.col(
+                "most_common_user_timezone"), F.lit("Unknown")
         ),
     )
 
@@ -191,7 +194,8 @@ def load_clean_data(
     # Fill missing values in '_country' with 'Unknown'
     df_deduplicated = df_deduplicated.withColumn(
         "_country",
-        F.when(F.col("_country").isNull(), "Unknown").otherwise(F.col("_country")),
+        F.when(F.col("_country").isNull(),
+               "Unknown").otherwise(F.col("_country")),
     )
 
     # Drop inconsistent data columns and columns that have been split
