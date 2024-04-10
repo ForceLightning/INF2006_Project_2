@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.inf2006.team6","l":"ComplaintsMapper"},{"p":"com.inf2006.team6","l":"ComplaintsReducer"},{"p":"com.inf2006.team6","l":"ComplaintsValidationMapper"},{"p":"com.inf2006.team6","l":"Main"},{"p":"com.inf2006.team6","l":"SentimentEnum"}];updateSearchResults();

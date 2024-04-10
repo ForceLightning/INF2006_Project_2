@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.inf2006.team6","l":"Task2"},{"p":"com.inf2006.team6","l":"TopReasonsMapper"},{"p":"com.inf2006.team6","l":"TopReasonsReducer"}];updateSearchResults();

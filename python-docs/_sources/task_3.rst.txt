@@ -1,0 +1,21 @@
+task\_3 package
+===============
+
+Submodules
+----------
+
+task\_3.task\_3\_preprocessing module
+-------------------------------------
+
+.. automodule:: task_3.task_3_preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: task_3
+   :members:
+   :undoc-members:
+   :show-inheritance:

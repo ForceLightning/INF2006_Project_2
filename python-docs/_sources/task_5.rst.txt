@@ -1,0 +1,29 @@
+task\_5 package
+===============
+
+Submodules
+----------
+
+task\_5.Task5 module
+--------------------
+
+.. automodule:: task_5.Task5
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+task\_5.sentiment\_analysis module
+----------------------------------
+
+.. automodule:: task_5.sentiment_analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: task_5
+   :members:
+   :undoc-members:
+   :show-inheritance:

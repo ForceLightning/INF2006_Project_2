@@ -1,0 +1,21 @@
+task\_4 package
+===============
+
+Submodules
+----------
+
+task\_4.Task4 module
+--------------------
+
+.. automodule:: task_4.Task4
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: task_4
+   :members:
+   :undoc-members:
+   :show-inheritance:
